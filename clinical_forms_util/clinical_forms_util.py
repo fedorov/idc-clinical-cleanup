@@ -60,7 +60,7 @@ class DictionaryReader:
   def get_dictionary_desc(self, name):
     index_df = self._dict_df["Form Index"]
     try:
-      return index_df[index_df["Member Name"] == name]["form_desc"].values[0]
+      return index_df[index_df["form"] == name]["form_desc"].values[0]
     except KeyError:
       return None
     except ValueError:

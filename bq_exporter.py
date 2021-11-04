@@ -72,6 +72,8 @@ try:
         args = parser.parse_args()
 
         for filename in os.listdir(args.input_dir):
+            if not filename.endswith(".json"):
+                continue
             load_dict_into_bq(args.paying, args.output_dataset, os.path.join(args.input_dir,filename))
 
     if __name__ == "__main__":
