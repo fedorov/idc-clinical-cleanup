@@ -12,6 +12,7 @@ try:
 
     def load_dict_into_bq(project, dataset, nl_json_filename):
 
+        print(f"Exporting {nl_json_filename}")
         # Construct a BigQuery client object.
         client = bigquery.Client(project=project)
 
@@ -23,7 +24,7 @@ try:
 
         table_id = f"{project}.{dataset}.{table}"
 
-        with open(file_path, "rb") as source_file:
+        with open(nl_json_filename, "rb") as source_file:
             job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 
         try:
@@ -36,7 +37,7 @@ try:
                 )
             )
         except:
-            print(f"Failed to import {form_id} into BQ")
+            print(f"Failed to import into BQ")
         
 
     def main():
@@ -71,7 +72,7 @@ try:
         args = parser.parse_args()
 
         for filename in os.listdir(args.input_dir):
-            load_dict_into_bq(args.project, args.output_dataset, filename)
+            load_dict_into_bq(args.paying, args.output_dataset, os.path.join(args.input_dir,filename))
 
     if __name__ == "__main__":
         main()

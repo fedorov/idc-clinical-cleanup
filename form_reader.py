@@ -4,7 +4,11 @@ import argparse
 from clinical_forms_util import clinical_forms_util
 import os
 import json
+from io import StringIO
 
+
+def get_nl_json_string(input_dict):
+  return '\n'.join([str(i) for i in input_dict])
 
 def main():
     parser = argparse.ArgumentParser(
@@ -58,12 +62,12 @@ def main():
         for form_id in dict_names:
             with open(os.path.join(args.output_dir, f"{args.collection_id}_{form_id}_dict.json"), "w") as f:
                 dict = parser.get_dictionary(form_id)
-                f.write(json.dumps(dict))
+                f.write(get_nl_json_string(dict))
                 print(f"Saved dictionary \"{form_id}\" with {len(dict)} items")
     print(f"Saved total of {len(dict_names)} dictionaries")
     with open(os.path.join(args.output_dir, f"{args.collection_id}_dict.json"), "w") as f:
         metadict = parser.get_meta_dictionary()
-        f.write(json.dumps(metadict))
+        f.write(get_nl_json_string(metadict))
         print(f"Saved metadictionary with {len(metadict)} items")
 if __name__ == "__main__":
     main()
