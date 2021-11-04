@@ -126,15 +126,3 @@ class DictionaryReader:
     for form_id in self.get_dictionary_names():
 
       self._dict[form_id] = self.parse_dictionary(form_id)
-
-
-      '''
-
-      import json
-
-      with open(prefix+"_dicts/"+form_id+"_dict.json", "w") as f:
-        for item in A0_json:
-          if int(item[("Form element number").lower().replace(" ","_")]) != -1:
-            f.write(str(item)+"\n")
-        #load_dict_into_bq(prefix,form_id)
-      '''
