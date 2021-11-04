@@ -29,15 +29,22 @@ class TestFormReader(unittest.TestCase):
         parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))
         parser.parse_dictionaries()
 
-    
     def test_parse_AI(self):
         parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))
-        parser.parse_dictionaries()
+        parser.parse_dictionary("AI")
 
         A1_dict = parser.get_dictionary("AI")
         print(A1_dict)
-        assert(len(A1_dict) == 7)
+        assert(len(A1_dict) == 9)
+
+        # confirm size of list is as expected
+        Aie1 = [i for i in A1_dict if i["variable_name"]=="Aie1"][0]
+        assert(len(Aie1["values"])==7)
         #clinical_forms_util.process_clinical_dict("test", df)
+
+    def test_parse_all(self):
+        parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))
+        parser.parse_dictionaries()
 
     def test_print_AI(self):
         parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))

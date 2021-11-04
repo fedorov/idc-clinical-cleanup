@@ -86,13 +86,18 @@ class DictionaryReader:
 
       # current entry is blank, parse it from the row
       else:
+        json_entry = self._parse_entry_from_row(row)
 
         if(row["Data Type"]) != "List":
-          json_entry = self._parse_entry_from_row(row)
           form_json.append(json_entry)
           print("Added entry: ")
           print(json_entry)            
           json_entry = {}
+
+    if json_entry.keys():
+      form_json.append(json_entry)
+
+    self._dict[form_id] = form_json
     return form_json
 
   def parse_dictionaries(self):
