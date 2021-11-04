@@ -16,6 +16,11 @@ class TestFormReader(unittest.TestCase):
             'test_files'
         )
 
+    @staticmethod
+    def _get_item_by_key(dict, key, value):
+        item = [i for i in dict if i[key]==value][0]
+        return item
+
     def test_init(self):
         parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))
     
@@ -28,6 +33,10 @@ class TestFormReader(unittest.TestCase):
     def test_parse(self):        
         parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))
         parser.parse_dictionaries()
+
+        for name in parser.get_dictionary_names():
+            form_desc = parser.get_dictionary_desc(name)
+            assert(form_desc is not None)
 
     def test_parse_AI(self):
         parser = clinical_forms_util.DictionaryReader(os.path.join(self._test_dir, "ACRIN_6677 Data Dictionary.xlsx"))
@@ -57,5 +66,4 @@ class TestFormReader(unittest.TestCase):
         print("---")
         AI_df = parser.get_dataframe("AI")
         print(AI_df)
-        assert(False)
         

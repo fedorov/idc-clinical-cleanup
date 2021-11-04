@@ -2,6 +2,13 @@ import pandas as pd
 from pandas.io import json
 import numpy as np
 
+import logging
+
+logger = logging.getLogger("idc-clinical-cleaner")
+logger.setLevel(logging.CRITICAL)
+console_handler = logging.StreamHandler()
+logging.getLogger("idc-clinical-cleaner").addHandler(console_handler)
+
 class DictionaryReader:
 
   def __init__(self, file_name):
@@ -14,7 +21,6 @@ class DictionaryReader:
 
     if not "Form Index" in self._dict_df.keys():
       raise ValueError
-      
 
   def _cleanup_dict_df(self):
     # replace all blank cells with NaN
@@ -44,6 +50,22 @@ class DictionaryReader:
     json_entry["values"].append(value_entry)
     return json_entry
 
+  def get_meta_dictionary(self):
+    metadict = []
+    for dict_name in self.get_dictionary_names():
+      entry = {"dict_name": dict_name, "dict_description": self.get_dictionary_desc(dict_name)}
+      metadict.append(entry)
+    return metadict
+
+  def get_dictionary_desc(self, name):
+    index_df = self._dict_df["Form Index"]
+    try:
+      return index_df[index_df["Member Name"] == name]["form_desc"].values[0]
+    except KeyError:
+      return None
+    except ValueError:
+      return None
+
   def get_dictionary_names(self):
     return list(self._dict_df.keys())[1:]
 
@@ -61,22 +83,22 @@ class DictionaryReader:
       #print(f"row {index}")
       # this is empty line, skip it if in the beginning, or add current entry if
       #. this is a separator
-      print("----")
-      print(row)
+      logger.debug("----")
+      logger.debug(row)
       
       if json_entry.keys():
         # this is new entry, and we have a non-empty one - add it
         if not pd.isnull(row["Variable Name"]):
           form_json.append(json_entry)
-          print("Added entry: ")
-          print(json_entry)
+          logger.debug("Added entry: ")
+          logger.debug(json_entry)
           json_entry = self._parse_entry_from_row(row)
         else:
           # this must be a List item - confirm first
           if json_entry[self._normalized_col_name("Data Type")] != "List":
-            print(f"Malformed input - expected List or non-empty Variable name in row {index}")
-            print(str(row))
-            print(json_entry)
+            logger.critical(f"Malformed input - expected List or non-empty Variable name in row {index}")
+            logger.debug(str(row))
+            logger.debug(json_entry)
             raise ValueError
 
           value_entry = {}
@@ -90,8 +112,8 @@ class DictionaryReader:
 
         if(row["Data Type"]) != "List":
           form_json.append(json_entry)
-          print("Added entry: ")
-          print(json_entry)            
+          logger.debug("Added entry: ")
+          logger.debug(json_entry)            
           json_entry = {}
 
     if json_entry.keys():
