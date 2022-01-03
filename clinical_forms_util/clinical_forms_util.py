@@ -59,8 +59,13 @@ class DictionaryReader:
 
   def get_dictionary_desc(self, name):
     index_df = self._dict_df["Form Index"]
+
+    # assume that "Form Index" sheet has two columns - name of the dictionary and description
+    dict_name_col = self._dict_df["Form Index"].columns[0]
+    dict_desc_col = self._dict_df["Form Index"].columns[1]
+
     try:
-      return index_df[index_df["Member Name"] == name]["form_desc"].values[0]
+      return index_df[index_df[dict_name_col] == name][dict_desc_col].values[0]
     except KeyError:
       return None
     except ValueError:
