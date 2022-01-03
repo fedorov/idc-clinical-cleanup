@@ -17,9 +17,17 @@ try:
         client = bigquery.Client(project=project)
 
         table = nl_json_filename.split("/")[-1].split(".")[-2]
+        format = nl_json_filename.split("/")[-1].split(".")[-1]
+        if format == "json":
+            source_format = bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+        elif format == "csv":
+            source_format = bigquery.SourceFormat.CSV
+        else:
+            print(f"Failed to recognize input format")
+            return
 
         job_config = bigquery.LoadJobConfig(
-            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON, autodetect=True,
+            source_format=source_format, autodetect=True,
         )
 
         table_id = f"{project}.{dataset}.{table}"
