@@ -36,6 +36,8 @@ class TestFormReader(unittest.TestCase):
 
         for name in parser.get_dictionary_names():
             form_desc = parser.get_dictionary_desc(name)
+            if form_desc is None:
+                print(f"Description is blank for {name}")
             assert(form_desc is not None)
 
     def test_parse_AI(self):
